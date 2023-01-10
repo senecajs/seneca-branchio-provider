@@ -3,4 +3,5 @@ module.exports = {
   TANGOCARD_KEY: '<KEY>',
   TANGOCARD_CUSTID: '<customerIdentifier>',
   TANGOCARD_ACCID: '<accountIdentifier>',
+  APP_ID:'1129730292471320855'
 }
