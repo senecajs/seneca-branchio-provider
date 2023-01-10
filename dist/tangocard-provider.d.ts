@@ -1,4 +1,4 @@
-declare type TangocardProviderOptions = {
+type TangocardProviderOptions = {
     url: string;
     fetch: any;
     entity: Record<string, any>;
