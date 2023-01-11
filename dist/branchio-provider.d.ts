@@ -1,13 +1,9 @@
-type BranchProviderOptions = {
-    code: string;
-    alias: string;
-    stage: string;
-    channel: string;
-    feature: string;
-    campaign: string;
-    appId: string;
-    tags: any;
+type BranchioProviderOptions = {
     debug: boolean;
 };
-declare function BranchProvider(this: any, options: BranchProviderOptions): void;
-export default BranchProvider;
+declare function BranchioProvider(this: any, options: BranchioProviderOptions): {
+    exports: {
+        sdk: () => any;
+    };
+};
+export default BranchioProvider;

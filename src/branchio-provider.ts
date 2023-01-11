@@ -2,63 +2,75 @@
 
 
 const Pkg = require('../package.json')
-const branchio = require('branchio-sdk')
+const Branchio = require('branchio-sdk')
 
-type BranchProviderOptions = {
-  code: string,
-  alias: string,
-  stage: string,
-  channel: string,
-  feature: string,
-  campaign: string,
-  appId:string,
-  tags: any,
+type BranchioProviderOptions = {
   debug: boolean
 }
 
-const defaults: BranchProviderOptions = {
-  code: '',
-  appId:'',
-  alias: '',
-  stage: '',
-  channel: '',
-  feature: '',
-  campaign: '',
-  tags: [],
+
+function BranchioProvider(this: any, options: BranchioProviderOptions) {
+  const seneca: any = this
+
+  const entityBuilder = this.export('provider/entityBuilder')
+
+  seneca
+    .message('sys:provider,provider:branchio,get:info', get_info)
+
+
+  async function get_info(this: any, _msg: any) {
+    return {
+      ok: true,
+      name: 'branchio',
+      version: Pkg.version,
+    }
+  }
+
+
+  entityBuilder(this, {
+    provider: {
+      name: 'branchio'
+    },
+    entity: {
+    },
+  })
+
+
+
+  seneca.prepare(async function(this: any) {
+    let res =
+      await this.post('sys:provider,get:keymap,provider:branchio')
+
+    if (!res.ok) {
+      throw this.fail('keymap')
+    }
+
+    this.shared.sdk = Branchio({
+      appId: res.keymap.appid.value
+    })
+
+  })
+
+
+  return {
+    exports: {
+      sdk: () => this.shared.sdk
+    }
+  }
+}
+
+
+// Default options.
+const defaults: BranchioProviderOptions = {
+  // TODO: Enable debug logging
   debug: false
 }
 
-function BranchProvider(this: any, options: BranchProviderOptions) {
-  const seneca: any = this
 
-  const getLink = async()=>{
+Object.assign(BranchioProvider, { defaults })
 
-    const client = branchio({
-      appId: options.appId
-    })
-
-    const { url } = await client.link({
-      alias: options.alias,
-      stage: options.stage,
-      channel: options.channel,
-      feature: options.feature,
-      campaign: options.campaign,
-      tags: options.tags,
-      data: {
-        'code': options.code
-      }
-    })
-
-    return url
-  }
-
-}
-
-
-Object.assign(BranchProvider, { defaults })
-
-export default BranchProvider
+export default BranchioProvider
 
 if ('undefined' !== typeof (module)) {
-  module.exports = BranchProvider
+  module.exports = BranchioProvider
 }
