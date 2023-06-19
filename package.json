@@ -14,7 +14,7 @@
   "author": "Richard Rodger - richardrodger.com",
   "repository": {
     "type": "git",
-    "url": "git://branchio.com/senecajs/seneca-branchio-provider.git"
+    "url": "git://github.com/senecajs/seneca-branchio-provider.git"
   },
   "scripts": {
     "test": "jest --coverage",
